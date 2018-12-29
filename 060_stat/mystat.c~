@@ -1,0 +1,68 @@
+#include <ctype.h>
+#include <grp.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+#include <unistd.h>
+
+//This function is for Step 4
+char * time2str(const time_t * when, long ns) {
+  char * ans = malloc(128 * sizeof(*ans));
+  char temp1[64];
+  char temp2[32];
+  const struct tm * t = localtime(when);
+  strftime(temp1, 512, "%Y-%m-%d %H:%M:%S", t);
+  strftime(temp2, 32, "%z", t);
+  snprintf(ans, 128, "%s.%09ld %s", temp1, ns, temp2);
+  return ans;
+}
+
+int main(int argc, char ** argv) {
+  // accept command line argument
+  if (argc != 2 || argv == NULL) {
+    perror("Invalid command line arg");
+    exit(EXIT_FAILURE);
+  }
+
+  // step 1: get the data from first 3 lines;
+  int status = 0;
+  struct stat buffer;  // uninitialized
+
+  status = lstat(argv[0], &buffer);
+
+  printf(" File:‘%s’\n", argv[0]);
+
+  const char * desc_file_type = NULL;
+  switch (buffer.st_mode) {
+    case S_IFBLK:
+      desc_file_type = "block special file";
+    case S_IFCHR:
+      desc_file_type = "character special file";
+    case S_IFDIR:
+      desc_file_type = "directory";
+    case S_IFIFO:
+      desc_file_type = "fifo";
+    case S_IFLNK:
+      desc_file_type = "symbolic link";
+    case S_IFREG:
+      desc_file_type = "regular file";
+    case S_IFSOCK:
+      desc_file_type = "socket";
+  }
+  printf("  Size: %-10lu\tBlocks: %-10lu IO Block: %-6lu %s\n",
+         buffer.st_size,
+         buffer.st_blocks,
+         buffer.st_blksize,
+         desc_file_type);
+
+  printf("Device: %lxh/%lud\tInode: %-10lu  Links: %lu\n",
+         buffer.st_dev,
+         buffer.st_rdev,
+         buffer.st_ino,
+         buffer.st_nlink);
+
+  return EXIT_SUCCESS;
+}

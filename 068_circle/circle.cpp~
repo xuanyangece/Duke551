@@ -1,0 +1,15 @@
+#include "circle.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "point.h"
+
+void Circle::move(double dx, double dy) {
+  this->center.move(dx, dy);
+}
+
+double Circle::intersectionArea(const Circle & otherCircle) {
+  double dis = center.distanceFrom(otherCircle);
+}

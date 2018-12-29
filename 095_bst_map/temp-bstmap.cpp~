@@ -1,0 +1,14 @@
+#include <assert.h>
+
+#include <cstdlib>
+#include <iostream>
+
+#include "bstmap.h"
+
+int main(void) {
+  BstMap<int, int> m1;
+  m1.BstMap<int, int>::add(1, 2);
+  //assert(m1.lookup(1) == 2);
+
+  return EXIT_SUCCESS;
+}

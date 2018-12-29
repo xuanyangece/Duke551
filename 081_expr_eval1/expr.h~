@@ -1,0 +1,25 @@
+#include <fstream>
+#include <iostream>
+
+class Expression
+{
+ private:
+ public:
+  virtual std::string toString() const = 0;
+};
+
+class NumExpression : public Expression
+{
+ public:
+  NumExpression(long num) {}
+
+  virtual std::string toString() const;
+};
+
+class PlusExpression
+{
+ public:
+  PlusExpression(Expression * lhs, Expression * rhs) {}
+
+  virtual std::string toString() const;
+};

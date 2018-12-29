@@ -1,0 +1,33 @@
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+int main(int argc, char ** argv) {
+  if (argc != 2) {
+    std::cerr << "invalid input";
+    exit(EXIT_FAILURE);
+  }
+
+  std::ifstream ifs;
+  ifs.open(argv[1], std::fstream::in);
+
+  // store strings
+  std::vector<std::string> v;
+  std::string s;
+  while (ifs.good()) {
+    std::getline(ifs, s);
+    v.push_back(s);
+  }
+
+  // sort strings
+  std::sort(v.begin(), v.end());
+
+  // print strings
+  for (std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it) {
+    std::cout << *it << std::endl;
+  }
+
+  ifs.close();
+  return EXIT_SUCCESS;
+}

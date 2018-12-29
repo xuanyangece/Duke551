@@ -1,0 +1,72 @@
+
+#include "./xyprojectfunc.h"
+
+class xCommand
+{
+ private:
+  std::vector<char *> envs;
+  char * env_path;
+  std::string input;
+  std::vector<char *> args;
+
+ public:
+  Command(std::vector<char *> curt_envs, char * curt_path, std::string curt_input) :
+      envs(curt_envs),
+      env_path(curt_path),
+      input(curt_input),
+      args() {
+    // use vector args to parse command line arguments
+    args = input2Args(input);
+  }
+
+  void execute() {
+    // find whether '/' exists in command name
+    std::string first(args[0]);
+    std::size_t found = first.find("/");
+
+    if (found != std::string::npos) { /* path provided, search in specific path */
+      // use loop to let pos point at the last occurence of '/', which aims to find directory
+      size_t pos = 0;
+      for (size_t i = first.size() - 1; i >= 0; i--) {
+        if (first[i] == '/') {
+          pos = i;
+          break;
+        }
+      }
+      // if '/' appears at last, command is purely a directory, which is incorrect
+      if (pos == first.size() - 1) {
+        std::cerr << "Invalid command: not a directory!" << std::endl;
+        _exit(atoi(args[0]));
+      }
+      else {
+        std::string command_dir = first.substr(0, pos + 1);
+        std::string command_name = first.substr(pos + 1);
+
+        std::vector<char *> paths;
+        paths.push_back(&command_dir[0]);
+
+        // find the path use function findPath() & execute it
+        std::string path_found = findPath(paths, &command_name[0]);
+        executePath(path_found, args, envs);
+      }
+    }
+    else { /* no path provided, search it */
+      // store all paths in vector paths
+      std::vector<char *> paths;
+      char * curt_path = std::strtok(env_path, ":");
+      while (curt_path != NULL) {
+        paths.push_back(curt_path);
+        curt_path = std::strtok(NULL, ":");
+      }
+
+      // find the path use function findPath() & execute it
+      std::string path_found = findPath(paths, args[0]);
+      executePath(path_found, args, envs);
+    }
+
+    // don't expect return unless error
+    _exit(atoi(args[0]));
+  }
+
+  ~Command() {}
+}
