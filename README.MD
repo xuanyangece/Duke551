@@ -1,3 +1,5 @@
+#### Course: Duke ECE551
+
 Welcome to your ece551 git repository.
 
 The first thing you should do is 
